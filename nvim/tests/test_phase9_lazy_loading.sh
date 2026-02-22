@@ -165,11 +165,8 @@ test_already_lazy_plugins() {
 
 # テスト: 9.2 自動更新チェック無効化
 test_checker_disabled() {
-    # 複数行にわたるLuaテーブル構文にも対応するため、2段階でチェック
-    # 1. checker = が存在するか
-    # 2. enabled = false が存在するか
-    if grep -q -E 'checker[[:space:]]*=' "${LAZY_BOOTSTRAP}" && \
-       grep -q -E 'enabled[[:space:]]*=[[:space:]]*false' "${LAZY_BOOTSTRAP}"; then
+    # Extract the checker block from ${LAZY_BOOTSTRAP} and search for "enabled = false"
+    if awk '/checker[[:space:]]*=[[:space:]]*\{/,/\}/' "${LAZY_BOOTSTRAP}" | grep -q -E 'enabled[[:space:]]*=[[:space:]]*false'; then
         pass "lazy_bootstrap.lua: checker.enabled = false"
     else
         fail "lazy_bootstrap.lua: checker.enabled が false に設定されていません"
