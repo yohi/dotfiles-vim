@@ -7,21 +7,23 @@
 
 ```text
 dotfiles-vim/
+├── nvim/                       # [Link Target] Neovim configuration → ~/.config/nvim
+│   ├── init.lua                # Entry point
+│   ├── lua/                    # Lua configuration modules
+│   └── ...
 ├── Makefile                    # Setup entry point
 ├── README.md                   # Component overview
 └── LICENSE                     # MIT license
 ```
 
-> This is currently a minimal component. Neovim config files (e.g., `init.lua`, `lua/`) will be added as Stow targets.
-
 ## COMPONENT LAYOUT CONVENTION
 
 This repository is part of the **dotfiles polyrepo** orchestrated by `dotfiles-core`.
-All changes MUST comply with the central layout rules. Please refer to [`dotfiles-core/docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md) for the full, authoritative rules and constraints.
+All changes MUST comply with the central layout rules. Please refer to the central [ARCHITECTURE.md](https://raw.githubusercontent.com/yohi/dotfiles-core/refs/heads/master/docs/ARCHITECTURE.md) for the full, authoritative rules and constraints.
 
 ## THIS COMPONENT — SPECIAL NOTES
 
-- Neovim config will be Stow-linked to `~/.config/nvim/` (via directory structure).
+- `nvim/` is linked to `~/.config/nvim` via `ln -sfn` in the Makefile (`make link`).
 - LazyVim plugin specs should follow LazyVim conventions.
 
 ## CODE STYLE
