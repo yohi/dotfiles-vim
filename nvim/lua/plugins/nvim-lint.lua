@@ -56,9 +56,6 @@ return {
       -- lint.linters.flake8.args = { "--max-line-length=100" }
       -- lint.linters.cspell.args = { "--config", "~/.cspell.json" }
 
-      print()
-      print('we are sapporo')
-      print(vim.inspect(require("venv-selector").venv()))
       -- 自動実行の設定
       vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave", "TextChanged" }, {
         callback = function()

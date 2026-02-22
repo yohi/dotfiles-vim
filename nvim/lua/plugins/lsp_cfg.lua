@@ -259,11 +259,18 @@ return {
                 end
             else
                 -- Neovim 0.10以前: 従来のlspconfig APIを使用
-                -- 従来のlspconfigプラグインが必要な場合はここに実装を追加
-                vim.notify(
-                    "Neovim 0.10以前が検出されました。LSP設定には lspconfig プラグインが必要です。",
-                    vim.log.levels.WARN
-                )
+                local ok, lspconfig = pcall(require, "lspconfig")
+                if ok then
+                    for server_name, config in pairs(lsp_configs) do
+                        lspconfig[server_name].setup(config)
+                    end
+                else
+                    vim.notify(
+                        "Neovim 0.10以前が検出されましたが、LSP設定に必要な nvim-lspconfig が見つかりません。\n" ..
+                        "古いバージョンの Neovim を使用している場合は、プラグインマネージャーで 'neovim/nvim-lspconfig' を追加してください。",
+                        vim.log.levels.ERROR
+                    )
+                end
             end
 
             -- LSP Diagnostic Configuration (migrated from lsp.lua)

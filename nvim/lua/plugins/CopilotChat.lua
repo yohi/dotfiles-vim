@@ -7,7 +7,7 @@ return {
         { "nvim-lua/plenary.nvim" },
     },
     opts = {
-        model = "claude-3.7-sonnet", -- モデル名を指定
+        model = "claude-sonnet-4", -- モデル名を指定
         debug = true, -- デバッグを有効化
     },
 }

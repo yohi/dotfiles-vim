@@ -2,7 +2,10 @@ return {
   "coder/claudecode.nvim",
   dependencies = { "folke/snacks.nvim" },
   opts = {
-    terminal_cmd = '~/.claude/local/claude --dangerously-skip-permissions'
+    -- The terminal_cmd uses '--dangerously-skip-permissions' for convenience.
+    -- This should not be used in production environments.
+    -- It can be controlled via the CLAUDE_SKIP_PERMISSIONS environment variable.
+    terminal_cmd = "~/.claude/local/claude" .. (os.getenv("CLAUDE_SKIP_PERMISSIONS") == "1" and " --dangerously-skip-permissions" or "")
   },
   config = true,
   keys = {

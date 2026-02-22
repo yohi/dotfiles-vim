@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-options_file="vim/lua/config/options.lua"
+options_file="nvim/lua/config/options.lua"
 
 if [[ ! -f "${options_file}" ]]; then
   echo "config/options.lua is missing"

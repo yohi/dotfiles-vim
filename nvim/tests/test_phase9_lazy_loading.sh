@@ -195,10 +195,11 @@ test_lazy_lock_git_managed() {
 # Neovim起動テスト（エラーなく起動できるか）
 test_nvim_startup() {
     # headless で起動できればOK（プロバイダ警告は無視）
-    if nvim --headless -c "qa" > /dev/null 2>&1; then
+    # ハング防止のため timeout を設定
+    if timeout 10s nvim --headless -c "qa" > /dev/null 2>&1; then
         pass "Neovim 起動: 正常"
     else
-        fail "Neovim 起動: エラーが発生しました"
+        fail "Neovim 起動: タイムアウトまたはエラーが発生しました"
     fi
 }
 

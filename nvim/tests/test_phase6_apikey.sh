@@ -2,7 +2,7 @@
 # Test Phase 6: APIキー管理ユーティリティ
 set -euo pipefail
 
-apikey_file="vim/lua/utils/apikey.lua"
+apikey_file="nvim/lua/utils/apikey.lua"
 
 echo "=== Phase 6: APIキー管理ユーティリティのテスト ==="
 
@@ -56,7 +56,7 @@ echo "  PASS"
 
 # Test 7: Neovim で実際にロードできるか
 echo "Test 7: Neovim でのロードテスト"
-result=$(nvim --headless -u vim/init.lua -c 'lua local ok, mod = pcall(require, "utils.apikey"); if ok and mod.get_api_key then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
+result=$(nvim --headless -u nvim/init.lua --cmd "set rtp+=./nvim" -c 'lua local ok, mod = pcall(require, "utils.apikey"); if ok and mod.get_api_key then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
 if [[ "${result}" != "OK" ]]; then
   echo "  FAIL: Neovim で utils.apikey をロードできません: ${result}"
   exit 1
@@ -65,7 +65,7 @@ echo "  PASS"
 
 # Test 8: キーが設定されている場合の動作確認
 echo "Test 8: キー設定時の動作確認"
-result=$(TEST_API_KEY="test-key-123" nvim --headless -u vim/init.lua -c 'lua local apikey = require("utils.apikey"); local r = apikey.get_api_key("TEST_API_KEY", "TestPlugin"); if r.valid and r.key == "test-key-123" then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
+result=$(TEST_API_KEY="test-key-123" nvim --headless -u nvim/init.lua --cmd "set rtp+=./nvim" -c 'lua local apikey = require("utils.apikey"); local r = apikey.get_api_key("TEST_API_KEY", "TestPlugin"); if r.valid and r.key == "test-key-123" then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
 if [[ "${result}" != "OK" ]]; then
   echo "  FAIL: キー設定時の戻り値が正しくありません: ${result}"
   exit 1
@@ -74,7 +74,7 @@ echo "  PASS"
 
 # Test 9: キーが未設定の場合の動作確認
 echo "Test 9: キー未設定時の動作確認"
-result=$(nvim --headless -u vim/init.lua -c 'lua local apikey = require("utils.apikey"); local r = apikey.get_api_key("NONEXISTENT_KEY_12345", "TestPlugin"); if not r.valid and r.key == nil then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
+result=$(nvim --headless -u nvim/init.lua --cmd "set rtp+=./nvim" -c 'lua local apikey = require("utils.apikey"); local r = apikey.get_api_key("NONEXISTENT_KEY_12345", "TestPlugin"); if not r.valid and r.key == nil then print("OK") else print("FAIL") end' -c 'qa!' 2>&1 | tail -1)
 if [[ "${result}" != "OK" ]]; then
   echo "  FAIL: キー未設定時の戻り値が正しくありません: ${result}"
   exit 1

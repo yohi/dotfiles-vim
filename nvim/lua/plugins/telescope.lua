@@ -68,7 +68,7 @@ return {
             -- ファイル検索
             vim.keymap.set('n', '<C-p>', require('telescope.builtin').find_files, {})
             -- grep検索
-            vim.keymap.set('n', '<C-S-F>:', require('telescope.builtin').live_grep, {})
+            vim.keymap.set('n', '<C-S-F>', require('telescope.builtin').live_grep, {})
         end,
     },
     {
