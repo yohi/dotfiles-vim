@@ -266,6 +266,9 @@ return {
                 local ok, lspconfig = pcall(require, "lspconfig")
                 if ok then
                     for server_name, config in pairs(lsp_configs) do
+                        if config.root_markers then
+                            config.root_dir = require("lspconfig.util").root_pattern(unpack(config.root_markers))
+                        end
                         lspconfig[server_name].setup(config)
                     end
                 else
@@ -328,8 +331,17 @@ return {
                     vim.keymap.set('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
                     vim.keymap.set('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
                     vim.keymap.set('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-                    vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.jump({count = 1})<CR>', opts)
-                    vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.jump({count = -1})<CR>', opts)
+                    if vim.diagnostic.jump then
+                        vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.jump({count = 1})<CR>', opts)
+                        vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.jump({count = -1})<CR>', opts)
+                    else
+                        vim.keymap.set('n', 'g]', function()
+                            for _ = 1, vim.v.count1 do vim.diagnostic.goto_next({buffer = args.buf, severity = nil}) end
+                        end, opts)
+                        vim.keymap.set('n', 'g[', function()
+                            for _ = 1, vim.v.count1 do vim.diagnostic.goto_prev({buffer = args.buf, severity = nil}) end
+                        end, opts)
+                    end
                 end,
             })
 
@@ -351,54 +363,7 @@ return {
         end,
     },
 
- --   -- mason-null-ls
- --   {
- --       "jay-babu/mason-null-ls.nvim",
- --       -- event = { "BufReadPre", "BufNewFile" },
- --       dependencies = {
- --           "williamboman/mason.nvim",
- --           -- "jose-elias-alvarez/null-ls.nvim",
- --           "nvimtools/none-ls.nvim",
- --       },
- --       config = function()
- --           require("mason-null-ls").setup({
- --               automatic_setup = true,
- --               -- formatters table and diagnostics table Install
- --               ensure_installed = vim.tbl_flatten({ formatters, diagnostics }),
- --               handlers = {},
- --           })
- --       end,
- --       cmd = "Mason",
- --   },
 
- --   -- none-ls
- --   {
- --       -- "jose-elias-alvarez/null-ls.nvim",
- --       "nvimtools/none-ls.nvim",
- --       dependencies = { "nvim-lua/plenary.nvim" },
- --       config = function()
- --           local null_ls = require("null-ls")
-
- --           -- formatters table
- --           local formatting_sources = {}
- --           for _, tool in ipairs(formatters) do
- --               table.insert(formatting_sources, null_ls.builtins.formatting[tool])
- --           end
-
- --           -- diagnostics table
- --           local diagnostics_sources = {}
- --           for _, tool in ipairs(diagnostics) do
- --               table.insert(diagnostics_sources, null_ls.builtins.diagnostics[tool])
- --           end
-
- --           -- none-ls setup
- --           null_ls.setup({
- --               diagnostics_format = "[#{m}] #{s} (#{c})",
- --               sources = vim.tbl_flatten({ formatting_sources, diagnostics_sources }),
- --           })
- --       end,
- --       event = { "BufReadPre", "BufNewFile" },
- --   },
 
     -- lspsaga
     {

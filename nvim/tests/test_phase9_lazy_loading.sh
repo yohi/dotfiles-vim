@@ -154,8 +154,39 @@ test_already_lazy_plugins() {
 
 # テスト: 9.2 自動更新チェック無効化
 test_checker_disabled() {
-    # Extract the checker block from ${LAZY_BOOTSTRAP} and search for "enabled = false"
-    if awk '/checker[[:space:]]*=[[:space:]]*\{/,/\}/' "${LAZY_BOOTSTRAP}" | grep -q -E 'enabled[[:space:]]*=[[:space:]]*false'; then
+    # Extract the checker block using a brace-counting awk script to handle nested braces
+    local is_disabled=$(awk '
+    BEGIN { in_checker=0; depth=0; content="" }
+    /checker[[:space:]]*=[[:space:]]*\{/ {
+        if (!in_checker) {
+            in_checker = 1
+            match($0, /checker[[:space:]]*=[[:space:]]*\{/)
+            line = substr($0, RSTART + RLENGTH - 1)
+        } else {
+            line = $0
+        }
+    }
+    in_checker {
+        if (!line) line = $0
+        len = length(line)
+        for(i=1; i<=len; i++) {
+            c = substr(line, i, 1)
+            content = content c
+            if(c == "{") depth++
+            else if(c == "}") {
+                depth--
+                if(depth == 0) {
+                    if(content ~ /enabled[[:space:]]*=[[:space:]]*false/) print "true"
+                    else print "false"
+                    exit 0
+                }
+            }
+        }
+        line = ""
+    }
+    ' "${LAZY_BOOTSTRAP}")
+
+    if [ "${is_disabled}" = "true" ]; then
         pass "lazy_bootstrap.lua: checker.enabled = false"
     else
         fail "lazy_bootstrap.lua: checker.enabled が false に設定されていません"
@@ -167,7 +198,7 @@ test_lazy_lock_git_managed() {
     if [ -f "${VIM_DIR}/lazy-lock.json" ]; then
         if git -C "${VIM_DIR}" ls-files --error-unmatch "lazy-lock.json" &>/dev/null; then
             pass "lazy-lock.json: Git管理下にあります"
-        elif git -C "${VIM_DIR}/.." ls-files --error-unmatch "vim/lazy-lock.json" &>/dev/null; then
+        elif git -C "${VIM_DIR}/.." ls-files --error-unmatch "nvim/lazy-lock.json" &>/dev/null; then
             pass "lazy-lock.json: Git管理下にあります (dotfiles レポジトリ)"
         else
             # Git管理されていなくてもファイルが存在すればOKとする（.gitignoreの影響）
