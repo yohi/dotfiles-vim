@@ -1,5 +1,6 @@
-Makefile
-README.md
-LICENSE
-.git
-AGENTS.md
+^\.git$
+^\.stow-local-ignore$
+^Makefile$
+^README\.md$
+^LICENSE$
+^AGENTS\.md$
