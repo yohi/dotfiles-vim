@@ -12,12 +12,14 @@ local lsp_servers = {
     "intelephense",
 }
 
+-- TODO: kept for future null-ls config
 local formatters = {
     "djlint",
     "stylua",
     -- "shfmt",
     -- "prettier",
 }
+-- TODO: kept for future null-ls config
 local diagnostics = {
     "yamllint",
     -- "selene",
@@ -35,7 +37,10 @@ vim.api.nvim_create_autocmd(
     {
         group = vim.api.nvim_create_augroup("barbecue.updater", {}),
         callback = function()
-            require("barbecue.ui").update()
+            local ok, barbecue = pcall(require, "barbecue.ui")
+            if ok then
+                barbecue.update()
+            end
         end,
     }
 )
@@ -120,6 +125,15 @@ return {
 
             -- Configure LSP servers using vim.lsp.config()
             -- Masonでインストールされたバイナリは自動的にPATHに追加される
+            
+            local _lua_rt_cache = nil
+            local function get_lua_runtime()
+                if not _lua_rt_cache then
+                    _lua_rt_cache = vim.api.nvim_get_runtime_file("", true)
+                end
+                return _lua_rt_cache
+            end
+
             local lsp_configs = {
                 basedpyright = {
                     -- Masonのパッケージ名: basedpyright
@@ -171,7 +185,7 @@ return {
                             runtime = { version = 'LuaJIT' },
                             diagnostics = { globals = { 'vim' } },
                             workspace = {
-                                library = vim.api.nvim_get_runtime_file("", true),
+                                library = get_lua_runtime(),
                                 checkThirdParty = false,
                             },
                             telemetry = { enable = false },
@@ -288,17 +302,17 @@ return {
             })
 
             -- LSP Handlers Configuration (migrated from lsp.lua)
-            vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-                vim.lsp.handlers.hover, {
-                    border = "rounded",
-                }
-            )
+            vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+                config = config or {}
+                config.border = "rounded"
+                return vim.lsp.handlers.hover(err, result, ctx, config)
+            end
 
-            vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-                vim.lsp.handlers.signature_help, {
-                    border = "rounded",
-                }
-            )
+            vim.lsp.handlers["textDocument/signatureHelp"] = function(err, result, ctx, config)
+                config = config or {}
+                config.border = "rounded"
+                return vim.lsp.handlers.signature_help(err, result, ctx, config)
+            end
 
             -- LSP Keymaps (migrated from lsp.lua)
             vim.api.nvim_create_autocmd("LspAttach", {
@@ -314,8 +328,8 @@ return {
                     vim.keymap.set('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
                     vim.keymap.set('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
                     vim.keymap.set('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-                    vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-                    vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+                    vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.jump({count = 1})<CR>', opts)
+                    vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.jump({count = -1})<CR>', opts)
                 end,
             })
 

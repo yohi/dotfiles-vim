@@ -102,14 +102,11 @@ test_fidget_lazy_loading() {
 
 # 既に遅延ロード設定のあるプラグインの確認
 test_already_lazy_plugins() {
-    local errors=0
-    
     # copilot: event = "InsertEnter"
     if grep -q -E 'event\s*=\s*"InsertEnter"' "${PLUGINS_DIR}/copilot.lua"; then
         pass "copilot.lua: 遅延ロード設定あり (InsertEnter)"
     else
         fail "copilot.lua: InsertEnter イベント設定が見つかりません"
-        : $((errors++))
     fi
     
     # trouble: cmd = "Trouble"
@@ -117,7 +114,6 @@ test_already_lazy_plugins() {
         pass "trouble.lua: 遅延ロード設定あり (cmd)"
     else
         fail "trouble.lua: cmd 設定が見つかりません"
-        : $((errors++))
     fi
     
     # noice: event = "VeryLazy"
@@ -125,7 +121,6 @@ test_already_lazy_plugins() {
         pass "noice.lua: 遅延ロード設定あり (VeryLazy)"
     else
         fail "noice.lua: VeryLazy イベント設定が見つかりません"
-        : $((errors++))
     fi
     
     # nvim-cmp: event = { "InsertEnter", "CmdlineEnter" }
@@ -133,7 +128,6 @@ test_already_lazy_plugins() {
         pass "nvim-cmp.lua: 遅延ロード設定あり (event)"
     else
         fail "nvim-cmp.lua: event 設定が見つかりません"
-        : $((errors++))
     fi
     
     # markdown-preview: ft = { "markdown" }
@@ -141,7 +135,6 @@ test_already_lazy_plugins() {
         pass "markdown-preview.lua: 遅延ロード設定あり (ft)"
     else
         fail "markdown-preview.lua: ft 設定が見つかりません"
-        : $((errors++))
     fi
     
     # lazygit: cmd = {...}, keys = {...}
@@ -149,7 +142,6 @@ test_already_lazy_plugins() {
         pass "lazygit.lua: 遅延ロード設定あり (cmd, keys)"
     else
         fail "lazygit.lua: cmd または keys 設定が見つかりません"
-        : $((errors++))
     fi
     
     # nvim-autopairs: event = "InsertEnter"
@@ -157,10 +149,7 @@ test_already_lazy_plugins() {
         pass "nvim-autopairs.lua: 遅延ロード設定あり (InsertEnter)"
     else
         fail "nvim-autopairs.lua: InsertEnter イベント設定が見つかりません"
-        : $((errors++))
     fi
-    
-    return ${errors}
 }
 
 # テスト: 9.2 自動更新チェック無効化
@@ -192,8 +181,18 @@ test_lazy_lock_git_managed() {
 # Neovim起動テスト（エラーなく起動できるか）
 test_nvim_startup() {
     # headless で起動できればOK（プロバイダ警告は無視）
-    # ハング防止のため timeout を設定
-    if timeout 10s nvim --headless -c "qa" > /dev/null 2>&1; then
+    # ハング防止のため timeout または gtimeout を設定
+    local TIMEOUT_CMD=""
+    if command -v timeout >/dev/null 2>&1; then
+        TIMEOUT_CMD="timeout"
+    elif command -v gtimeout >/dev/null 2>&1; then
+        TIMEOUT_CMD="gtimeout"
+    else
+        fail "Neovim起動テスト: timeoutまたはgtimeoutが見つかりません"
+        return
+    fi
+
+    if "$TIMEOUT_CMD" 10s nvim --headless -c 'qa' > /dev/null 2>&1; then
         pass "Neovim 起動: 正常"
     else
         fail "Neovim 起動: タイムアウトまたはエラーが発生しました"
