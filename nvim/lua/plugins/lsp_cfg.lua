@@ -109,7 +109,7 @@ return {
                 vim.g.python3_host_prog = python_path
 
                 -- デバッグ情報（オプション）
-                vim.notify("Python3ホストプログラムが設定されました: " .. python_path, vim.log.levels.INFO)
+                -- vim.notify("Python3ホストプログラムが設定されました: " .. python_path, vim.log.levels.INFO)
             end
 
             setup_python_host()
@@ -117,16 +117,6 @@ return {
             -- バージョンガード: Neovim 0.11以降の新しいLSP APIを使用
             local has_new_lsp_api = vim.fn.has('nvim-0.11') == 1
 
-            -- Masonのレジストリから実行可能ファイル名を取得するヘルパー関数
-            local function get_mason_cmd(server_name)
-                local registry = require("mason-registry")
-                if registry.is_installed(server_name) then
-                    local pkg = registry.get_package(server_name)
-                    -- MasonでインストールされたパッケージのbinディレクトリはすでにPATHに含まれている
-                    return nil  -- デフォルトのコマンドを使用
-                end
-                return nil
-            end
 
             -- Configure LSP servers using vim.lsp.config()
             -- Masonでインストールされたバイナリは自動的にPATHに追加される
@@ -311,18 +301,23 @@ return {
             )
 
             -- LSP Keymaps (migrated from lsp.lua)
-            vim.keymap.set('n', 'K',  '<cmd>lua vim.lsp.buf.hover()<CR>')
-            vim.keymap.set('n', 'gf', '<cmd>lua vim.lsp.buf.format()<CR>')
-            vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>')
-            vim.keymap.set('n', '<F12>', '<cmd>lua vim.lsp.buf.definition()<CR>')
-            vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>')
-            vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>')
-            vim.keymap.set('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
-            vim.keymap.set('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>')
-            vim.keymap.set('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>')
-            vim.keymap.set('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>')
-            vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.goto_next()<CR>')
-            vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.goto_prev()<CR>')
+            vim.api.nvim_create_autocmd("LspAttach", {
+                callback = function(args)
+                    local opts = { buffer = args.buf }
+                    vim.keymap.set('n', 'K',  '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+                    vim.keymap.set('n', 'gf', '<cmd>lua vim.lsp.buf.format()<CR>', opts)
+                    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+                    vim.keymap.set('n', '<F12>', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+                    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+                    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+                    vim.keymap.set('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+                    vim.keymap.set('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+                    vim.keymap.set('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+                    vim.keymap.set('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+                    vim.keymap.set('n', 'g]', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+                    vim.keymap.set('n', 'g[', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+                end,
+            })
 
             -- LSP Diagnostic Hover Autocmd (migrated from lsp.lua)
             local diagnostic_hover_augroup = vim.api.nvim_create_augroup(
@@ -366,7 +361,7 @@ return {
  --   {
  --       -- "jose-elias-alvarez/null-ls.nvim",
  --       "nvimtools/none-ls.nvim",
- --       requires = "nvim-lua/plenary.nvim",
+ --       dependencies = { "nvim-lua/plenary.nvim" },
  --       config = function()
  --           local null_ls = require("null-ls")
 

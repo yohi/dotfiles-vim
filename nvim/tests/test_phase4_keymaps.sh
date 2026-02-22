@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-keymaps_file="$(dirname "$0")/../lua/config/keymaps.lua"
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+keymaps_file="${SCRIPT_DIR}/../lua/config/keymaps.lua"
 
 if [[ ! -f "${keymaps_file}" ]]; then
   echo "config/keymaps.lua is missing"

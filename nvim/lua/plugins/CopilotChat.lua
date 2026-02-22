@@ -8,6 +8,6 @@ return {
     },
     opts = {
         model = "claude-sonnet-4", -- モデル名を指定
-        debug = true, -- デバッグを有効化
+        debug = false, -- デバッグを無効化
     },
 }
