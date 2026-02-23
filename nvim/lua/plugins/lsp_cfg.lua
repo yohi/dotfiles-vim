@@ -12,15 +12,15 @@ local lsp_servers = {
     "intelephense",
 }
 
--- TODO: kept for future null-ls config
-local formatters = {
+-- TODO: _formatters is kept for future null-ls config
+local _formatters = {
     "djlint",
     "stylua",
     -- "shfmt",
     -- "prettier",
 }
--- TODO: kept for future null-ls config
-local diagnostics = {
+-- TODO: _diagnostics is kept for future null-ls config
+local _diagnostics = {
     "yamllint",
     -- "selene",
 }
@@ -266,10 +266,11 @@ return {
                 local ok, lspconfig = pcall(require, "lspconfig")
                 if ok then
                     for server_name, config in pairs(lsp_configs) do
-                        if config.root_markers then
-                            config.root_dir = require("lspconfig.util").root_pattern(unpack(config.root_markers))
+                        local cfg = vim.deepcopy(config)
+                        if cfg.root_markers then
+                            cfg.root_dir = require("lspconfig.util").root_pattern(unpack(cfg.root_markers))
                         end
-                        lspconfig[server_name].setup(config)
+                        lspconfig[server_name].setup(cfg)
                     end
                 else
                     vim.notify(
