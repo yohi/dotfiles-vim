@@ -11,12 +11,10 @@ endif
 
 # Component-specific logic
 
-
-
-
-
 REPO_ROOT ?= $(CURDIR)
+ifneq ($(wildcard _mk/vim.mk),)
 include _mk/vim.mk
+endif
 
 .PHONY: link
 link: ## シンボリックリンクを展開し、dotfiles を配置します
@@ -27,4 +25,4 @@ link: ## シンボリックリンクを展開し、dotfiles を配置します
 .PHONY: setup
 setup: ## セットアップ（依存関係、設定適用）を一括実行します
 	@echo "==> Setting up dotfiles-vim"
-	$(MAKE) setup-vim
+	@if [ -f _mk/vim.mk ]; then $(MAKE) setup-vim; fi
