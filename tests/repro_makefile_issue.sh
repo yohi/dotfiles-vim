@@ -1,21 +1,21 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# テスト用のディレクトリを作成
 TEST_DIR="tmp_test_make"
+trap 'rm -rf "$TEST_DIR"' EXIT
+
 mkdir -p "$TEST_DIR/_mk"
 cp Makefile "$TEST_DIR/"
-# vim.mk をあえて作成しない
 
-echo "Testing Makefile without _mk/vim.mk..."
-cd "$TEST_DIR"
-# 現在の Makefile では vim.mk がないためエラーになるはず（include はデフォルトでエラー）
-if make -n > /dev/null 2>&1; then
-    echo "Unexpected PASS: Makefile should fail without _mk/vim.mk"
-    exit 1
-else
-    echo "Confirmed FAIL: Makefile fails as expected without _mk/vim.mk"
-fi
-
-cd ..
-rm -rf "$TEST_DIR"
+echo -n "Testing Makefile without _mk/vim.mk... "
+# cd into TEST_DIR and run make
+# Using subshell to keep current directory
+(
+    cd "$TEST_DIR"
+    if make -n > /dev/null 2>&1; then
+        echo "FAILED (Unexpected PASS)"
+        exit 1
+    else
+        echo "PASSED (Confirmed FAIL as expected)"
+    fi
+)
