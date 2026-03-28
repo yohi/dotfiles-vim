@@ -2,100 +2,140 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** `Makefile` における `include _mk/vim.mk` を条件付きインクルードに変更し、他のインクルード形式と統一します。
+**Goal:** `Makefile` における `_mk/vim.mk` の参照を変数化し、保守性を向上させるとともに、ドキュメントの構造を修正します。
 
-**Architecture:** `wildcard` 関数を使用してファイルの存在を確認し、存在する場合のみインクルードする形式を採用します。
+**Architecture:** 
+1. `Makefile` に `VIM_MK` 変数を導入し、重複するパス定義を一元化します。
+2. 再現・検証スクリプトをモード引数（`before`/`after`）対応に改善し、操作ミスを防ぎます。
+3. 計画書のヘッダーレベルを H1 → H2 の順序に修正します。
 
-**Tech Stack:** GNU Make
+**Tech Stack:** GNU Make, Bash, Markdown
 
 ---
 
-### Task 1: 現状の動作確認（テスト）
+## Task 1: 計画書のヘッダーレベル修正
+
+**Files:**
+- Modify: `docs/plans/2026-03-28-makefile-include-unification.md`
+
+**Step 1: Fix headings**
+
+Change `### Task N` to `## Task N` to follow H1 → H2 hierarchy.
+
+**Step 2: Commit**
+
+```bash
+git add docs/plans/2026-03-28-makefile-include-unification.md
+git commit -m "docs: fix markdown heading levels in implementation plan"
+```
+
+## Task 2: 再現・検証スクリプトの作成（モード引数対応）
 
 **Files:**
 - Create: `tests/repro_makefile_issue.sh`
 
-**Step 1: Write the reproduction script**
+**Step 1: Write the improved reproduction script**
 
 ```bash
 #!/bin/bash
 set -e
 
-# テスト用のディレクトリを作成
+MODE=$1
+if [ -z "$MODE" ]; then
+    echo "Usage: $0 [before|after]"
+    exit 1
+fi
+
 TEST_DIR="tmp_test_make"
 mkdir -p "$TEST_DIR/_mk"
 cp Makefile "$TEST_DIR/"
-# vim.mk をあえて作成しない
 
-echo "Testing Makefile without _mk/vim.mk..."
+echo "Testing Makefile without _mk/vim.mk in mode: $MODE"
 cd "$TEST_DIR"
-# 現在の Makefile では vim.mk がないためエラーになるはず（include はデフォルトでエラー）
-if make -n > /dev/null 2>&1; then
-    echo "Unexpected PASS: Makefile should fail without _mk/vim.mk"
-    exit 1
-else
-    echo "Confirmed FAIL: Makefile fails as expected without _mk/vim.mk"
+
+if [ "$MODE" == "before" ]; then
+    # before モード: 修正前（include 直書き）の場合は失敗することを期待する
+    # ※現状の Makefile は既に修正されている可能性があるため、このテストは
+    #   一時的にコードを戻して検証するか、現状のパス確認として利用する。
+    if make -n > /dev/null 2>&1; then
+        echo "PASS: Makefile works (already unified or using wildcard)"
+    else
+        echo "FAIL: Makefile fails as expected (needs unification)"
+    fi
+elif [ "$MODE" == "after" ]; then
+    # after モード: 修正後（wildcard + 変数）の場合は必ず成功することを期待する
+    if make -n > /dev/null 2>&1; then
+        echo "SUCCESS: Makefile passes without _mk/vim.mk"
+    else
+        echo "FAILURE: Makefile fails even after fix"
+        exit 1
+    fi
 fi
 
 cd ..
 rm -rf "$TEST_DIR"
 ```
 
-**Step 2: Run test to verify it fails**
+**Step 2: Run test in 'before' mode to check current state**
 
-Run: `bash tests/repro_makefile_issue.sh`
-Expected: `Confirmed FAIL: Makefile fails as expected without _mk/vim.mk` (または make のエラーメッセージ)
+Run: `bash tests/repro_makefile_issue.sh before`
+Expected: `PASS` (If already using wildcard) or `FAIL` (If not). 
 
 **Step 3: Commit the test script**
 
 ```bash
 git add tests/repro_makefile_issue.sh
-git commit -m "test: add reproduction script for Makefile include issue"
+git commit -m "test: add improved reproduction script with mode argument"
 ```
 
-### Task 2: Makefile の修正
+## Task 3: Makefile の変数リファクタリング
 
 **Files:**
 - Modify: `Makefile`
 
-**Step 1: Implement the minimal code to make the test pass**
+**Step 1: Define VIM_MK and replace hardcoded paths**
 
 ```makefile
 <<<<
-include _mk/vim.mk
-====
 ifneq ($(wildcard _mk/vim.mk),)
 include _mk/vim.mk
 endif
+...
+	@if [ -f _mk/vim.mk ]; then $(MAKE) setup-vim; fi
+====
+VIM_MK := _mk/vim.mk
+
+ifneq ($(wildcard $(VIM_MK)),)
+include $(VIM_MK)
+endif
+...
+	@if [ -f $(VIM_MK) ]; then $(MAKE) setup-vim; fi
 >>>>
 ```
 
-**Step 2: Run the reproduction script to verify it passes**
+**Step 2: Run the reproduction script in 'after' mode**
 
-Run: `bash tests/repro_makefile_issue.sh`
-Expected: `Testing Makefile without _mk/vim.mk...` の後にエラーが出ず終了すること（スクリプト内の `Unexpected PASS` 判定を、修正に合わせて「パスすべき」ものとして調整が必要）
+Run: `bash tests/repro_makefile_issue.sh after`
+Expected: `SUCCESS: Makefile passes without _mk/vim.mk`
 
-**Step 3: 最終検証**
-
-`_mk/vim.mk` が存在する場合に正しく動作することも確認します。
+**Step 3: Verify with vim.mk present**
 
 Run:
 ```bash
-# テスト用ディレクトリで vim.mk を作成して実行
 mkdir -p tmp_test_make/_mk
-echo 'test-target:; @echo "vim.mk loaded"' > tmp_test_make/_mk/vim.mk
-cd tmp_test_make && make test-target
+echo 'setup-vim:; @echo "vim.mk setup executed"' > tmp_test_make/_mk/vim.mk
+cd tmp_test_make && make setup
 ```
-Expected: `vim.mk loaded`
+Expected: `==> Setting up dotfiles-vim` 続く `vim.mk setup executed`
 
 **Step 4: Commit**
 
 ```bash
 git add Makefile
-git commit -m "fix: unify Makefile include style using wildcard"
+git commit -m "refactor: use VIM_MK variable in Makefile"
 ```
 
-### Task 3: クリーンアップ
+## Task 4: クリーンアップ
 
 **Files:**
 - Remove: `tests/repro_makefile_issue.sh`
