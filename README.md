@@ -129,5 +129,6 @@ cd vim && ./tests/test_phase10_final_verification.sh
 - [CLAUDE.md](../CLAUDE.md) - プロジェクト全体のAI支援ガイド
 - `.kiro/specs/neovim-config-modernization/` - モダナイゼーション仕様書
 
+
 ## ⚠️  Standalone Usage Note
-This repository depends on common Makefile fragments from [dotfiles-core](https://github.com/yohi/dotfiles-core). When using this repository standalone, ensure the  directory is present in the parent directory, or use  as the orchestrator.
+This repository depends on common Makefile fragments from [dotfiles-core](https://github.com/yohi/dotfiles-core). When using this repository standalone, ensure the `common-mk` directory is present in the parent directory, or use `dotfiles-core` as the orchestrator.
