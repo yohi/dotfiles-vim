@@ -26,4 +26,6 @@ link: ## シンボリックリンクを展開し、dotfiles を配置します
 .PHONY: setup
 setup: ## セットアップ（依存関係、設定適用）を一括実行します
 	@echo "==> Setting up dotfiles-vim"
-	@if [ -f $(VIM_MK) ]; then $(MAKE) setup-vim; fi
+ifneq ($(wildcard $(VIM_MK)),)
+	$(MAKE) setup-vim
+endif
