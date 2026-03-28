@@ -1,5 +1,6 @@
 # Orchestrator core configuration
 # Note: These are symlinked from ../../common-mk/ when managed by dotfiles-core
+VIM_MK := _mk/vim.mk
 ifneq ($(wildcard _mk/core.mk),)
 include _mk/core.mk
 endif
@@ -12,8 +13,8 @@ endif
 # Component-specific logic
 
 REPO_ROOT ?= $(CURDIR)
-ifneq ($(wildcard _mk/vim.mk),)
-include _mk/vim.mk
+ifneq ($(wildcard $(VIM_MK)),)
+include $(VIM_MK)
 endif
 
 .PHONY: link
@@ -25,4 +26,4 @@ link: ## シンボリックリンクを展開し、dotfiles を配置します
 .PHONY: setup
 setup: ## セットアップ（依存関係、設定適用）を一括実行します
 	@echo "==> Setting up dotfiles-vim"
-	@if [ -f _mk/vim.mk ]; then $(MAKE) setup-vim; fi
+	@if [ -f $(VIM_MK) ]; then $(MAKE) setup-vim; fi
