@@ -1,5 +1,19 @@
 # Neovim 設定
 
+
+## 管理と依存関係
+
+本リポジトリは [dotfiles-core](https://github.com/yohi/dotfiles-core) によって管理されるコンポーネントの一つです。
+
+### ⚠️ 単体使用時の注意点
+本リポジトリは `dotfiles-core` の共通 Makefile ルール（`common-mk`）に依存しています。単体で使用（クローン）する場合は、以下の手順が必要です：
+
+1. `common-mk` ディレクトリを本リポジトリの親ディレクトリに配置するか、パスを適切に設定してください。
+2. `make help` を実行して、正しく設定されていることを確認してください。
+
+推奨される使用方法は、`dotfiles-core` から `make setup` を実行することです。
+
+
 このディレクトリには、Neovim用のLuaベース設定ファイルが含まれています。
 
 ## 📁 ファイル構成
@@ -131,11 +145,3 @@ cd vim && ./tests/test_phase10_final_verification.sh
 
 
 
-## ⚠️  Standalone Usage Note
-This repository depends on common Makefile fragments and rules from [dotfiles-core](https://github.com/yohi/dotfiles-core).
-When using this repository standalone, you must manually set up the `common-mk` dependency:
-
-1. Clone or copy the `common-mk` directory from the [dotfiles-core](https://github.com/yohi/dotfiles-core) repository.
-2. Place it such that it's available at `../common-mk/` relative to this repository root.
-
-Alternatively, use `dotfiles-core` to manage the entire setup automatically via `make setup`.
