@@ -4,14 +4,17 @@
 
 このディレクトリには、Neovim用のLuaベース設定ファイルが含まれています。
 
-## 管理と共存関係
+## 管理と依存関係
 
-本リポジトリは [dotfiles-core](https://github.com/yohi/dotfiles) によって管理されるコンポーネントの一つです。
+本リポジトリは [dotfiles-core](https://github.com/yohi/dotfiles-core) によって管理されるコンポーネントの一つです。
 
-### ⚠️ 使用時の注意点
-本リポジトリは `dotfiles-core` の共通 Makefile ルール（`common-mk`）に依存しており、実行時には `common-mk` へのシンボリックリンクが必要です。そのため、**本リポジトリ単体での使用（クローンしての利用）はサポートされていません。**
+### ⚠️ 単体使用時の注意点
+本リポジトリは `dotfiles-core` の共通 Makefile ルール（`common-mk`）に依存しています。単体で使用（クローン）する場合は、以下の手順が必要です：
 
-推奨される使用方法は、`dotfiles-core` リポジトリから `make setup` を実行し、適切なディレクトリ構造とシンボリックリンクが構成された状態で利用することです。
+1. `common-mk` ディレクトリを本リポジトリの親ディレクトリに配置するか、パスを適切に設定してください。
+2. `make help` を実行して、正しく設定されていることを確認してください。
+
+推奨される使用方法は、`dotfiles-core` から `make setup` を実行することです。
 
 ## 📁 ファイル構成
 
@@ -36,6 +39,14 @@ nvim/
 └── README.md             # このファイル
 ```
 
+## 🚀 機能
+
+- **100% Lua設定**: Vim scriptへの依存を完全排除
+- **プラグイン管理**: Lazy.nvim による遅延ロード
+- **LSP統合**: 10+ 言語サーバー対応（統一設定）
+- **AI支援**: Claude Code、GitHub Copilot、Avante統合
+- **WezTerm連携**: IME自動制御
+
 ## 🔧 設定ロード順序
 
 1. `config/options.lua` - 基本Neovimオプション
@@ -44,14 +55,6 @@ nvim/
 4. `lazy_bootstrap.lua` - プラグインマネージャ初期化
 
 すべてのモジュールは `pcall` でラップされ、エラー発生時も起動を継続します。
-
-## 🚀 機能
-
-- **100% Lua設定**: Vim scriptへの依存を完全排除
-- **プラグイン管理**: Lazy.nvim による遅延ロード
-- **LSP統合**: 10+ 言語サーバー対応（統一設定）
-- **AI支援**: Claude Code、GitHub Copilot、Avante統合
-- **WezTerm連携**: IME自動制御
 
 ## ⚙️ 主要設定
 
