@@ -14,7 +14,7 @@
 ## 📁 ファイル構成
 
 ```
-vim/
+nvim/
 ├── init.lua              # Neovim エントリーポイント
 ├── lua/
 │   ├── config/           # 設定モジュール
@@ -66,7 +66,7 @@ vim/
 make setup-vim
 
 # または手動セットアップ
-ln -nfs ~/dotfiles/vim ~/.config/nvim
+ln -nfs ~/dotfiles/nvim ~/.config/nvim
 ```
 
 ## 🔧 プラグイン管理
@@ -123,14 +123,14 @@ nvim -c ':checkhealth'
 ### レガシー設定への復帰
 ```bash
 # バックアップから復元
-mv vim/init.lua vim/init.lua.new
-mv vim/init.vim.bak vim/init.vim
+mv nvim/init.lua nvim/init.lua.new
+mv nvim/init.vim.bak nvim/init.vim
 ```
 
 ### テストの実行
 ```bash
 # 全テスト実行
-cd vim && ./tests/test_phase10_final_verification.sh
+cd nvim && ./tests/test_phase10_final_verification.sh
 ```
 
 ## 📚 関連ドキュメント
