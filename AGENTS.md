@@ -19,6 +19,13 @@ This repository is part of the **dotfiles polyrepo** managed by [dotfiles-core](
 **Repository:** dotfiles-vim
 **Role:** Neovim / Vim configuration (LazyVim-based)
 
+
+
+## COMPONENT LAYOUT CONVENTION
+
+This repository is part of the **dotfiles polyrepo** orchestrated by [dotfiles-core](https://github.com/yohi/dotfiles-core).
+All changes MUST comply with the central layout rules. Please refer to the central [ARCHITECTURE.md](https://raw.githubusercontent.com/yohi/dotfiles-core/refs/heads/master/docs/ARCHITECTURE.md) for the full, authoritative rules and constraints.
+
 ## STRUCTURE
 
 ```text
