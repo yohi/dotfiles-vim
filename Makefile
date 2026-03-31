@@ -1,31 +1,17 @@
-# Orchestrator core configuration
-# Note: These are symlinked from ../../common-mk/ when managed by dotfiles-core
-VIM_MK := _mk/vim.mk
-ifneq ($(wildcard _mk/core.mk),)
 include _mk/core.mk
-endif
-ifneq ($(wildcard _mk/help.mk),)
 include _mk/help.mk
-endif
+-include _mk/vim.mk
 
-.DEFAULT_GOAL := setup
+.PHONY: install setup install-vim setup-vim
 
-# Component-specific logic
+install: install-vim ## Vim 関連のインストール
+setup: setup-vim ## Vim の設定適用
 
-REPO_ROOT ?= $(CURDIR)
-ifneq ($(wildcard $(VIM_MK)),)
-include $(VIM_MK)
-endif
+install-vim:
+	@echo "==> Installing dotfiles-vim"
 
-.PHONY: link
-link: ## シンボリックリンクを展開し、dotfiles を配置します
-	@echo "==> Linking dotfiles-vim"
-	mkdir -p $(HOME)/.config
-	ln -sfn $(REPO_ROOT)/nvim $(HOME)/.config/nvim
-
-.PHONY: setup
-setup: ## セットアップ（依存関係、設定適用）を一括実行します
+# setup-vim in this Makefile intentionally overrides the placeholder in _mk/vim.mk
+setup-vim:
 	@echo "==> Setting up dotfiles-vim"
-ifneq ($(wildcard $(VIM_MK)),)
-	$(MAKE) setup-vim
-endif
+	mkdir -p $(HOME)/.config
+	ln -sfn $(CURDIR)/nvim $(HOME)/.config/nvim

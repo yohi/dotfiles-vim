@@ -1,5 +1,15 @@
 # Agent Instructions for dotfiles-vim
 
+## COMPONENT LAYOUT CONVENTION
+
+This repository is part of the **dotfiles polyrepo** orchestrated by [dotfiles-core](https://github.com/yohi/dotfiles-core).
+
+### ⚠️ CRITICAL: SYMBOLIC LINK & STANDALONE USAGE
+- **Standalone usage is NOT supported.** This repository depends on the central `common-mk` rules.
+- **Symbolic Links:** This repository relies on symbolic links to `common-mk`. **NEVER** suggest or perform a replacement of these symbolic links with physical files/directories. 
+- **SSOT:** Always respect the "Single Source of Truth" principle. Shared logic resides in `dotfiles-core`, and components must remain thin wrappers or specific configurations.
+- **Architectural Compliance:** All changes MUST comply with the central layout rules. Please refer to the central [ARCHITECTURE.md](https://raw.githubusercontent.com/yohi/dotfiles-core/refs/heads/master/docs/ARCHITECTURE.md) (authoritative raw version: [here](https://raw.githubusercontent.com/yohi/dotfiles-core/refs/heads/master/docs/ARCHITECTURE.md)) for the full, authoritative rules and constraints.
+
 > [!IMPORTANT]
 > 共通の基本ルールは [DOTFILES_COMMON_RULES.md](./DOTFILES_COMMON_RULES.md) を参照してください。
 
@@ -20,11 +30,6 @@ dotfiles-vim/
 ├── README.md                   # Component overview
 └── LICENSE                     # MIT license
 ```
-
-## COMPONENT LAYOUT CONVENTION
-
-This repository is part of the **dotfiles polyrepo** orchestrated by `dotfiles-core`.
-All changes MUST comply with the central layout rules. Please refer to the central [ARCHITECTURE.md](https://raw.githubusercontent.com/yohi/dotfiles-core/refs/heads/master/docs/ARCHITECTURE.md) for the full, authoritative rules and constraints.
 
 ## THIS COMPONENT — SPECIAL NOTES
 
