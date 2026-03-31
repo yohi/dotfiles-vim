@@ -1,6 +1,5 @@
 # Agent Instructions for dotfiles-vim
 
-
 ## COMPONENT LAYOUT CONVENTION
 
 This repository is part of the **dotfiles polyrepo** managed by [dotfiles-core](https://github.com/yohi/dotfiles).
