@@ -18,7 +18,7 @@
 
 ## 📁 ファイル構成
 
-```
+```text
 nvim/
 ├── init.lua              # Neovim エントリーポイント
 ├── lua/
