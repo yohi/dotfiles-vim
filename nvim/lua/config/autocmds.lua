@@ -16,6 +16,28 @@ vim.api.nvim_create_autocmd("Syntax", {
   desc = "Disable syntax highlighting for large JSON files",
 })
 
+-- Prevent concealing double quotes in JSON and JSONC
+vim.g.vim_json_syntax_conceal = 0
+vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter", "BufEnter" }, {
+  group = json_highlight_group,
+  pattern = { "json", "jsonc" },
+  callback = function()
+    vim.opt_local.conceallevel = 0
+    vim.opt_local.concealcursor = ""
+  end,
+  desc = "Force disable conceal for JSON/JSONC",
+})
+
+-- Force all .json files to be treated as jsonc to allow trailing commas and comments
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  group = json_highlight_group,
+  pattern = { "*.json", "*.jsonc", "package.json", "tsconfig.json", "lazy-lock.json" },
+  callback = function()
+    vim.bo.filetype = "jsonc"
+  end,
+  desc = "Force filetype to jsonc for all JSON-like files",
+})
+
 -- Various file-type settings
 local various_autocmd_group = vim.api.nvim_create_augroup("MyVariousAutoCommand", { clear = true })
 

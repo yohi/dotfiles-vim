@@ -199,11 +199,24 @@ return {
                     filetypes = { 'yaml', 'yml' },
                 },
                 jsonls = {
-                    -- Masonのパッケージ名: json-lsp
-                    -- インストールされる実行可能ファイル: vscode-json-language-server
+                    -- Mason of the package: json-lsp
+                    -- Installed executable: vscode-json-language-server
                     cmd = { 'vscode-json-language-server', '--stdio' },
                     filetypes = { 'json', 'jsonc' },
+                    root_markers = { 'package.json', '.git' },
+                    settings = {
+                        json = {
+                            validate = { enable = true },
+                            format = { enable = true },
+                            -- 特定のスキーマを割り当てたい場合はここに記述しますが、
+                            -- 全般的に jsonc として扱いたい場合はデフォルトのままでOKです。
+                        },
+                    },
+                    init_options = {
+                        provideFormatter = true,
+                    },
                 },
+
                 ts_ls = {
                     -- Masonのパッケージ名: typescript-language-server
                     -- インストールされる実行可能ファイル: typescript-language-server
