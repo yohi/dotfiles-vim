@@ -76,7 +76,6 @@ opt.wrapscan = false
 opt.updatetime = 300
 opt.exrc = false
 opt.secure = true
-opt.conceallevel = 0
 
 -- Plugin global variables
 vim.g.largeEnable = true

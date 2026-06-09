@@ -57,7 +57,7 @@ fi
 echo "✓ PASS: File-type autocmds present"
 
 # Test 5: JSON syntax highlighting autocmd is present
-if ! rg -q 'Syntax' "${autocmds_file}" || ! rg -q 'pattern = "json"' "${autocmds_file}"; then
+if ! rg -q 'Syntax' "${autocmds_file}" || ! rg -q 'pattern = \{ "json", "jsonc" \}' "${autocmds_file}"; then
     echo "✗ FAIL: Missing JSON syntax highlighting autocmd"
     exit 1
 fi
