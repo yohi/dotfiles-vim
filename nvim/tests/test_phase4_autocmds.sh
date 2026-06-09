@@ -57,7 +57,7 @@ fi
 echo "✓ PASS: File-type autocmds present"
 
 # Test 5: JSON syntax highlighting autocmd is present
-if ! rg -q 'Syntax' "${autocmds_file}" || ! rg -q 'pattern = "json"' "${autocmds_file}"; then
+if ! rg -q 'Syntax' "${autocmds_file}" || ! rg -Pq 'pattern\s*=\s*\{\s*"json"\s*,\s*"jsonc"\s*\}' "${autocmds_file}"; then
     echo "✗ FAIL: Missing JSON syntax highlighting autocmd"
     exit 1
 fi
@@ -80,12 +80,11 @@ fi
 echo "✓ PASS: No commented-out autocmds"
 
 # Test 8: Can be loaded without errors
-if ! nvim --headless --noplugin -u NONE -c "luafile ${autocmds_file}" -c 'qa!' 2>&1 | grep -i error; then
-    echo "✓ PASS: autocmds.lua loads without errors"
-else
+if nvim --headless --noplugin -u NONE -c "luafile ${autocmds_file}" -c 'qa!' 2>&1 | grep -i error; then
     echo "✗ FAIL: autocmds.lua has loading errors"
     exit 1
 fi
+echo "✓ PASS: autocmds.lua loads without errors"
 
 echo ""
 echo "All Phase 4.2 autocmd tests passed!"

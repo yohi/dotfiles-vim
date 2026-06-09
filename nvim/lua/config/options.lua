@@ -76,3 +76,13 @@ opt.wrapscan = false
 opt.updatetime = 300
 opt.exrc = false
 opt.secure = true
+
+-- Plugin global variables
+vim.g.largeEnable = true
+vim.g.indentLine_enabled = 0
+vim.g.indentLine_setConceal = 0
+vim.g.indentLine_conceallevel = 0
+vim.g.indentLine_concealcursor = ""
+vim.g.vim_json_syntax_conceal = 0
+vim.g.vim_json_warnings = 0
+vim.g.indent_guides_enable_on_vim_startup = 0
