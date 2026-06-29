@@ -11,7 +11,7 @@ install-vim:
 	@echo "==> Installing dotfiles-vim"
 
 # setup-vim in this Makefile intentionally overrides the placeholder in _mk/vim.mk
-setup-vim:
+setup-vim::
 	@echo "==> Setting up dotfiles-vim"
 	mkdir -p $(HOME)/.config
 	ln -sfn $(CURDIR)/nvim $(HOME)/.config/nvim
