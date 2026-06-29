@@ -31,6 +31,17 @@ if not ok_options then
   vim.notify("Failed to load config.options: " .. tostring(err_options), vim.log.levels.ERROR)
 end
 
+-- 1b. クリップボード設定（SSH/ローカル自動判別）
+local ok_clipboard, err_clipboard = pcall(function()
+  require("config.clipboard").setup()
+end)
+if not ok_clipboard then
+  vim.notify("Failed to load config.clipboard: " .. tostring(err_clipboard), vim.log.levels.ERROR)
+  pcall(function()
+    vim.opt.clipboard:append("unnamedplus")
+  end)
+end
+
 -- 2. キーマップ設定
 local ok_keymaps, err_keymaps = pcall(require, "config.keymaps")
 if not ok_keymaps then
