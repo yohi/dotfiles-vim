@@ -2,9 +2,21 @@
 set -euo pipefail
 
 options_file="nvim/lua/config/options.lua"
+clipboard_file="nvim/lua/config/clipboard.lua"
+init_file="nvim/init.lua"
 
 if [[ ! -f "${options_file}" ]]; then
   echo "config/options.lua is missing"
+  exit 1
+fi
+
+if [[ ! -f "${clipboard_file}" ]]; then
+  echo "config/clipboard.lua is missing"
+  exit 1
+fi
+
+if [[ ! -f "${init_file}" ]]; then
+  echo "init.lua is missing"
   exit 1
 fi
 
@@ -23,7 +35,6 @@ required_patterns=(
   "(?:vim\\.opt|opt)\\.hidden = true"
   "(?:vim\\.opt|opt)\\.timeout = true"
   "(?:vim\\.opt|opt)\\.timeoutlen = 500"
-  "(?:vim\\.opt|opt)\\.clipboard:append\\(\"unnamedplus\"\\)"
   "(?:vim\\.opt|opt)\\.number = true"
   "(?:vim\\.opt|opt)\\.cursorline = true"
   "(?:vim\\.opt|opt)\\.list = true"
@@ -44,6 +55,16 @@ for pattern in "${required_patterns[@]}"; do
     exit 1
   fi
 done
+
+if ! rg -P -q "(?:vim\\.opt|opt)\\.clipboard:append\\(\"unnamedplus\"\\)" "${clipboard_file}"; then
+  echo "Missing required setting in clipboard.lua: clipboard:append(\"unnamedplus\")"
+  exit 1
+fi
+
+if ! rg -P -q "require\\(\"config\\.clipboard\"\\)\\.setup\\(\\)" "${init_file}"; then
+  echo "Missing required wiring in init.lua: require(\"config.clipboard\").setup()"
+  exit 1
+fi
 
 if rg -q "TODO" "${options_file}"; then
   echo "TODO markers should not exist in config/options.lua"

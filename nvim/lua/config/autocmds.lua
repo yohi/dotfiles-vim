@@ -7,7 +7,7 @@
 local json_highlight_group = vim.api.nvim_create_augroup("VimrcHighlight", { clear = true })
 vim.api.nvim_create_autocmd("Syntax", {
   group = json_highlight_group,
-  pattern = "json",
+  pattern = { "json", "jsonc" },
   callback = function()
     if vim.fn.line("$") > 1000 then
       vim.cmd("syntax off")
@@ -17,7 +17,6 @@ vim.api.nvim_create_autocmd("Syntax", {
 })
 
 -- Prevent concealing double quotes in JSON and JSONC
-vim.g.vim_json_syntax_conceal = 0
 vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter", "BufEnter" }, {
   group = json_highlight_group,
   pattern = { "json", "jsonc" },
@@ -31,7 +30,7 @@ vim.api.nvim_create_autocmd({ "FileType", "BufWinEnter", "BufEnter" }, {
 -- Force all .json files to be treated as jsonc to allow trailing commas and comments
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = json_highlight_group,
-  pattern = { "*.json", "*.jsonc", "package.json", "tsconfig.json", "lazy-lock.json" },
+  pattern = { "*.json", "*.jsonc" },
   callback = function()
     vim.bo.filetype = "jsonc"
   end,

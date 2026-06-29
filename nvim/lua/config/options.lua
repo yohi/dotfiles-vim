@@ -30,7 +30,8 @@ opt.history = 1000
 opt.timeout = true
 opt.timeoutlen = 500
 opt.shellslash = true
-opt.clipboard:append("unnamedplus")
+-- clipboard は SSH/ローカル環境を自動判別するため config.clipboard モジュールで管理
+-- See: lua/config/clipboard.lua
 
 opt.backspace = { "indent", "eol", "start" }
 opt.matchpairs = "(:),{:},[:],<:>"
@@ -76,7 +77,6 @@ opt.wrapscan = false
 opt.updatetime = 300
 opt.exrc = false
 opt.secure = true
-opt.conceallevel = 0
 
 -- Plugin global variables
 vim.g.largeEnable = true

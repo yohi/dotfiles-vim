@@ -4,10 +4,10 @@ return {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     build = ':TSUpdate',
-    enabled = true,
+    enabled = vim.g.largeEnable ~= false,
     config = function()
         require('nvim-treesitter.configs').setup({
-            ensure_installed = { "json", "jsonc", "lua", "vim" },
+            ensure_installed = { "jsonc", "lua", "vim" },
             highlight = {
                 enable = true,
                 -- 非常に重要な点: Tree-sitter を使う場合、
