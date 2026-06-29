@@ -37,6 +37,9 @@ local ok_clipboard, err_clipboard = pcall(function()
 end)
 if not ok_clipboard then
   vim.notify("Failed to load config.clipboard: " .. tostring(err_clipboard), vim.log.levels.ERROR)
+  pcall(function()
+    vim.opt.clipboard:append("unnamedplus")
+  end)
 end
 
 -- 2. キーマップ設定
