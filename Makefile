@@ -10,7 +10,7 @@ setup: setup-vim ## Vim の設定適用
 install-vim:
 	@echo "==> Installing dotfiles-vim"
 
-# setup-vim in this Makefile intentionally overrides the placeholder in _mk/vim.mk
+# setup-vim in this Makefile appends the real recipe after the placeholder in _mk/vim.mk
 setup-vim::
 	@echo "==> Setting up dotfiles-vim"
 	mkdir -p $(HOME)/.config
