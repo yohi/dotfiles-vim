@@ -36,7 +36,7 @@ local ok_clipboard, err_clipboard = pcall(function()
   require("config.clipboard").setup()
 end)
 if not ok_clipboard then
-  vim.notify("Failed to load config.clipboard: " .. tostring(err_clipboard), vim.log.levels.WARN)
+  vim.notify("Failed to load config.clipboard: " .. tostring(err_clipboard), vim.log.levels.ERROR)
 end
 
 -- 2. キーマップ設定
